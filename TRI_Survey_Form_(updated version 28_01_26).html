@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRI Survey - Transformation Readiness Index</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#f8fafc;--bg2:#ffffff;--bg3:#f1f5f9;--card:#ffffff;--border:rgba(0,0,0,0.1);
+            --blue:#2563eb;--cyan:#0891b2;--purple:#7c3aed;--pink:#db2777;--green:#059669;--emerald:#10b981;
+            --orange:#d97706;--amber:#f59e0b;--red:#dc2626;--text:#1e293b;--text2:#475569;--text3:#64748b;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+        .bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(37,99,235,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.03) 1px,transparent 1px);background-size:50px 50px;z-index:-2}
+        .bg-glow{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 20% 0%,rgba(37,99,235,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(124,58,237,0.06) 0%,transparent 50%);z-index:-1}
+        .header{background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:1rem 2rem;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+        .header-inner{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+        .logo{display:flex;align-items:center;gap:0.75rem}
+        .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 4px 12px rgba(37,99,235,0.25)}
+        .logo-text h1{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--text),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .logo-text span{font-size:0.7rem;color:var(--text3)}
+        .progress-bar{display:flex;align-items:center;gap:0.35rem}
+        .progress-step{display:flex;align-items:center;gap:0.2rem;font-size:0.7rem;color:var(--text3);padding:0.25rem 0.5rem;border-radius:6px;transition:all 0.3s}
+        .progress-step.active{color:var(--blue);background:rgba(37,99,235,0.1)}
+        .progress-step.completed{color:var(--emerald)}
+        .progress-dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
+        .progress-step.active .progress-dot{background:var(--blue);box-shadow:0 0 8px var(--blue)}
+        .progress-step.completed .progress-dot{background:var(--emerald)}
+        .main{max-width:900px;margin:0 auto;padding:2rem}
+        @media(max-width:768px){.main{padding:1rem}.header{padding:0.75rem 1rem}.progress-bar{display:none}}
+        .step{display:none;animation:fadeIn 0.4s ease}
+        .step.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+        .card{background:var(--card);border-radius:16px;padding:1.5rem;border:1px solid var(--border);margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+        @media(max-width:768px){.card{padding:1rem;border-radius:12px}}
+        .card-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;color:var(--text)}
+        .welcome-hero{text-align:center;padding:2.5rem 1rem}
+        .welcome-hero h2{font-family:'Space Grotesk',sans-serif;font-size:2.25rem;font-weight:700;background:linear-gradient(135deg,var(--text),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem}
+        @media(max-width:768px){.welcome-hero h2{font-size:1.6rem}.welcome-hero{padding:1.5rem 0.5rem}}
+        .welcome-hero .tagline{font-size:1rem;color:var(--text2);margin-bottom:1.5rem}
+        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem;margin:1.5rem 0}
+        .feature-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:left}
+        .feature-card .icon{font-size:1.25rem;margin-bottom:0.35rem}
+        .feature-card h4{font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:0.2rem;font-size:0.9rem;color:var(--text)}
+        .feature-card p{font-size:0.75rem;color:var(--text2)}
+        .time-badge{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(8,145,178,0.1);border:1px solid rgba(8,145,178,0.3);padding:0.4rem 0.8rem;border-radius:20px;font-size:0.8rem;color:var(--cyan);margin-bottom:1.5rem}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.75rem 1.75rem;border-radius:10px;font-family:'IBM Plex Sans Thai',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.3s;border:none}
+        .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:white;box-shadow:0 4px 12px rgba(37,99,235,0.25)}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,99,235,0.35)}
+        .btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+        .btn-secondary:hover{background:var(--bg);border-color:var(--blue)}
+        .btn-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+        .form-group{margin-bottom:1.25rem}
+        .form-label{display:block;font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;color:var(--text)}
+        .radio-group{display:flex;flex-wrap:wrap;gap:0.4rem}
+        .radio-option{flex:1;min-width:100px}
+        .radio-option input{display:none}
+        .radio-option label{display:block;padding:0.65rem 0.75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.8rem;text-align:center;color:var(--text)}
+        .radio-option input:checked+label{background:rgba(37,99,235,0.1);border-color:var(--blue);color:var(--blue)}
+        .radio-option label:hover{border-color:var(--blue)}
+        .radio-option.full{min-width:100%;flex:none}
+        .yesno-group{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+        @media(max-width:480px){.yesno-group{grid-template-columns:1fr}}
+        .yesno-option input{display:none}
+        .yesno-option label{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.25rem;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.3s;min-height:90px;color:var(--text)}
+        .yesno-option label .icon{font-size:1.75rem;margin-bottom:0.35rem}
+        .yesno-option input:checked+label{border-color:var(--emerald);background:rgba(16,185,129,0.1)}
+        .yesno-option input[value="no"]:checked+label{border-color:var(--orange);background:rgba(245,158,11,0.1)}
+        .yesno-option label:hover{border-color:var(--blue);transform:translateY(-2px)}
+        .form-select{width:100%;padding:0.75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'IBM Plex Sans Thai',sans-serif;font-size:0.85rem;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.6rem center;background-size:0.9rem}
+        .form-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+        .urgency-group{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
+        @media(max-width:600px){.urgency-group{grid-template-columns:1fr}}
+        .urgency-option input{display:none}
+        .urgency-option label{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.25rem 0.75rem;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.3s;text-align:center;color:var(--text)}
+        .urgency-option label .icon{font-size:1.75rem;margin-bottom:0.5rem}
+        .urgency-option label .title{font-weight:600;margin-bottom:0.2rem;font-size:0.9rem}
+        .urgency-option label .desc{font-size:0.75rem;color:var(--text3)}
+        .urgency-option:nth-child(1) input:checked+label{border-color:var(--emerald);background:rgba(16,185,129,0.1)}
+        .urgency-option:nth-child(2) input:checked+label{border-color:var(--amber);background:rgba(251,191,36,0.1)}
+        .urgency-option:nth-child(3) input:checked+label{border-color:var(--red);background:rgba(239,68,68,0.1)}
+        .urgency-option label:hover{border-color:var(--blue);transform:translateY(-2px)}
+        .perspective-header{display:flex;align-items:center;gap:1rem;padding:1.25rem;background:linear-gradient(135deg,var(--card),rgba(37,99,235,0.05));border-radius:14px;margin-bottom:1.25rem;border:1px solid var(--border)}
+        .perspective-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.75rem}
+        .perspective-icon.business{background:linear-gradient(135deg,rgba(37,99,235,0.15),rgba(8,145,178,0.1))}
+        .perspective-icon.tech{background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(219,39,119,0.1))}
+        .perspective-icon.people{background:linear-gradient(135deg,rgba(5,150,105,0.15),rgba(16,185,129,0.1))}
+        .perspective-icon.culture{background:linear-gradient(135deg,rgba(219,39,119,0.15),rgba(124,58,237,0.1))}
+        .perspective-info h3{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:0.2rem;color:var(--text)}
+        .perspective-info p{font-size:0.8rem;color:var(--text2)}
+        .perspective-progress{margin-left:auto;text-align:right}
+        .perspective-progress .count{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;color:var(--blue)}
+        .perspective-progress .label{font-size:0.7rem;color:var(--text3)}
+        @media(max-width:600px){.perspective-header{flex-wrap:wrap;padding:1rem}.perspective-progress{width:100%;text-align:left;margin-top:0.5rem;margin-left:0}}
+        .subdim-section{margin-bottom:1.75rem}
+        .subdim-title{font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;color:var(--blue);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem}
+        .subdim-title::before{content:'';width:4px;height:18px;background:linear-gradient(180deg,var(--blue),var(--purple));border-radius:2px}
+        .question-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:0.75rem;transition:all 0.3s}
+        .question-card:hover{border-color:rgba(37,99,235,0.3)}
+        .question-card.answered{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.05)}
+        .question-text{font-size:0.9rem;margin-bottom:0.85rem;line-height:1.65;color:var(--text)}
+        .question-number{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--bg);border-radius:5px;font-size:0.7rem;font-weight:600;margin-right:0.4rem;color:var(--text2);border:1px solid var(--border)}
+        .rating-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:0.4rem}
+        @media(max-width:480px){.rating-scale{grid-template-columns:repeat(2,1fr)}}
+        .rating-option input{display:none}
+        .rating-option label{display:flex;flex-direction:column;align-items:center;padding:0.6rem 0.4rem;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s;text-align:center}
+        .rating-option label .score{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:0.15rem}
+        .rating-option label .desc{font-size:0.65rem;color:var(--text2);line-height:1.2}
+        .rating-option:nth-child(1) label .score{color:var(--red)}
+        .rating-option:nth-child(2) label .score{color:var(--orange)}
+        .rating-option:nth-child(3) label .score{color:var(--cyan)}
+        .rating-option:nth-child(4) label .score{color:var(--emerald)}
+        .rating-option input:checked+label{border-color:var(--blue);background:rgba(37,99,235,0.08)}
+        .rating-option:nth-child(1) input:checked+label{border-color:var(--red);background:rgba(220,38,38,0.08)}
+        .rating-option:nth-child(2) input:checked+label{border-color:var(--orange);background:rgba(217,119,6,0.08)}
+        .rating-option:nth-child(3) input:checked+label{border-color:var(--cyan);background:rgba(8,145,178,0.08)}
+        .rating-option:nth-child(4) input:checked+label{border-color:var(--emerald);background:rgba(16,185,129,0.08)}
+        .rating-option label:hover{background:var(--bg3);transform:translateY(-2px)}
+        .comment-box{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+        .comment-box label{display:block;font-size:0.8rem;color:var(--text2);margin-bottom:0.4rem}
+        .comment-box textarea{width:100%;padding:0.85rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'IBM Plex Sans Thai',sans-serif;font-size:0.85rem;resize:vertical;min-height:70px}
+        .comment-box textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+        .substep-nav{display:flex;justify-content:center;gap:0.4rem;margin-bottom:1.25rem;flex-wrap:wrap}
+        .substep-btn{padding:0.45rem 0.85rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:'IBM Plex Sans Thai',sans-serif}
+        .substep-btn.active{background:rgba(37,99,235,0.1);border-color:var(--blue);color:var(--blue)}
+        .substep-btn.completed{border-color:var(--emerald);color:var(--emerald)}
+        .substep-btn:hover{border-color:var(--blue)}
+        .substep{display:none;animation:fadeIn 0.4s ease}
+        .substep.active{display:block}
+        .review-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-bottom:1.25rem}
+        .review-card{background:var(--bg2);border-radius:10px;padding:1rem;text-align:center;border:1px solid var(--border)}
+        .review-card .icon{font-size:1.35rem;margin-bottom:0.35rem}
+        .review-card .value{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;color:var(--blue)}
+        .review-card .label{font-size:0.7rem;color:var(--text3)}
+        .review-card.complete .value{color:var(--emerald)}
+        .review-card.incomplete .value{color:var(--orange)}
+        .email-input{width:100%;padding:0.85rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'IBM Plex Sans Thai',sans-serif;font-size:0.95rem}
+        .email-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+        .email-input::placeholder{color:var(--text3)}
+        .consent-group{display:flex;align-items:flex-start;gap:0.6rem;padding:0.85rem;background:var(--bg3);border-radius:8px;margin:1rem 0;border:1px solid var(--border)}
+        .consent-group input[type="checkbox"]{width:18px;height:18px;margin-top:0.1rem;cursor:pointer;accent-color:var(--blue)}
+        .consent-group label{font-size:0.8rem;color:var(--text2);cursor:pointer}
+        .step-dots{display:flex;justify-content:center;gap:0.4rem;margin-bottom:1.5rem}
+        .step-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all 0.3s}
+        .step-dot.active{background:var(--blue);box-shadow:0 0 8px rgba(37,99,235,0.4)}
+        .step-dot.completed{background:var(--emerald)}
+        .floating-progress{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.85rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:50;display:none}
+        .floating-progress.visible{display:block}
+        .floating-progress .label{font-size:0.7rem;color:var(--text3);margin-bottom:0.2rem}
+        .floating-progress .bar{width:100px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+        .floating-progress .bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:3px;transition:width 0.3s}
+        @media(max-width:768px){.floating-progress{bottom:1rem;right:1rem;left:1rem}.floating-progress .bar{width:100%}}
+    </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<header class="header">
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">📊</div>
+            <div class="logo-text">
+                <h1>Transformation Readiness Index</h1>
+                <span>แบบประเมินความพร้อมในการปรับเปลี่ยนองค์กร</span>
+            </div>
+        </div>
+        <div class="progress-bar" id="headerProgress">
+            <div class="progress-step active" data-step="0"><div class="progress-dot"></div><span>เริ่มต้น</span></div>
+            <div class="progress-step" data-step="1"><div class="progress-dot"></div><span>ข้อมูล</span></div>
+            <div class="progress-step" data-step="2"><div class="progress-dot"></div><span>บริบท</span></div>
+            <div class="progress-step" data-step="3"><div class="progress-dot"></div><span>ประเมิน</span></div>
+            <div class="progress-step" data-step="4"><div class="progress-dot"></div><span>ส่ง</span></div>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <!-- Step 0: Welcome -->
+    <div class="step active" id="step0">
+        <div class="welcome-hero">
+            <h2>Transformation Readiness Index</h2>
+            <p class="tagline">เข้าใจจุดแข็ง ระบุโอกาส วางแผนการเปลี่ยนแปลง</p>
+            <div class="time-badge"><span>⏱️</span><span>ใช้เวลาประมาณ 15-20 นาที</span></div>
+            <div class="features-grid">
+                <div class="feature-card"><div class="icon">📈</div><h4>Business Strategy</h4><p>วิสัยทัศน์ การสนับสนุนจากผู้บริหาร ความคล่องตัว</p></div>
+                <div class="feature-card"><div class="icon">💻</div><h4>Technology</h4><p>โครงสร้างพื้นฐาน IT เครื่องมือดิจิทัล นวัตกรรม</p></div>
+                <div class="feature-card"><div class="icon">👥</div><h4>People & Leadership</h4><p>ขีดความสามารถ ความพร้อมรับการเปลี่ยนแปลง</p></div>
+                <div class="feature-card"><div class="icon">🌟</div><h4>Culture</h4><p>การเปิดรับแนวคิดใหม่ ความร่วมมือ การเรียนรู้</p></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">🎁 สิ่งที่ท่านจะได้รับ</div>
+            <ul style="padding-left:1.5rem;color:var(--text2);font-size:0.85rem;">
+                <li style="margin-bottom:0.4rem;">รายงานคะแนน TRI องค์กรของท่าน</li>
+                <li style="margin-bottom:0.4rem;">การวิเคราะห์จุดแข็งและจุดอ่อนใน 4 มิติหลัก</li>
+                <li style="margin-bottom:0.4rem;">ข้อเสนอแนะเชิงปฏิบัติการสำหรับการพัฒนาองค์กร</li>
+                <li>แผนดำเนินการ (Transformation Roadmap)</li>
+            </ul>
+        </div>
+        <div class="card" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.02));border-color:rgba(16,185,129,0.2);">
+            <div class="card-title" style="color:var(--emerald);">🔒 ความเป็นส่วนตัว</div>
+            <p style="font-size:0.85rem;color:var(--text2);">ข้อมูลที่ท่านให้จะถูกใช้เพื่อการประเมินและวิเคราะห์ภาพรวมเท่านั้น ข้อมูลส่วนบุคคลจะไม่ถูกเปิดเผยต่อบุคคลที่สาม</p>
+        </div>
+        <div style="text-align:center;margin-top:1.5rem;">
+            <button class="btn btn-primary" onclick="goToStep(1)">เริ่มต้นประเมิน <span>→</span></button>
+        </div>
+    </div>
+
+    <!-- Step 1: Demographics -->
+    <div class="step" id="step1">
+        <div class="step-dots"><div class="step-dot completed"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+        <h2 style="font-family:'Space Grotesk';font-size:1.4rem;font-weight:700;margin-bottom:0.4rem;">ข้อมูลผู้ตอบและองค์กร</h2>
+        <p style="color:var(--text2);margin-bottom:1.25rem;font-size:0.85rem;">เพื่อให้เราสามารถเปรียบเทียบผลกับองค์กรที่ใกล้เคียงกับท่าน</p>
+        
+        <div class="card">
+            <div class="card-title">👤 ข้อมูลส่วนตัว</div>
+            <div class="form-group">
+                <label class="form-label">1. เพศ</label>
+                <div class="radio-group">
+                    <div class="radio-option"><input type="radio" name="gender" id="g1" value="male"><label for="g1">ชาย</label></div>
+                    <div class="radio-option"><input type="radio" name="gender" id="g2" value="female"><label for="g2">หญิง</label></div>
+                    <div class="radio-option"><input type="radio" name="gender" id="g3" value="na"><label for="g3">ไม่ระบุ / ไม่ต้องการเปิดเผย</label></div>
+                    <div class="radio-option"><input type="radio" name="gender" id="g4" value="other"><label for="g4">อื่นๆ</label></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">2. ชื่อ-นามสกุล</label>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <input type="text" class="email-input" id="firstName" name="firstName" placeholder="ชื่อ" style="flex:1;min-width:120px;">
+                    <input type="text" class="email-input" id="lastName" name="lastName" placeholder="นามสกุล" style="flex:1;min-width:120px;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">3. อายุ</label>
+                <div class="radio-group">
+                    <div class="radio-option"><input type="radio" name="age" id="a1" value="26-35"><label for="a1">26-35 ปี</label></div>
+                    <div class="radio-option"><input type="radio" name="age" id="a2" value="36-45"><label for="a2">36-45 ปี</label></div>
+                    <div class="radio-option"><input type="radio" name="age" id="a3" value="46-55"><label for="a3">46-55 ปี</label></div>
+                    <div class="radio-option"><input type="radio" name="age" id="a4" value="56-65"><label for="a4">56-65 ปี</label></div>
+                    <div class="radio-option"><input type="radio" name="age" id="a5" value="66+"><label for="a5">66 ปีขึ้นไป</label></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">4. ระดับตำแหน่งงาน</label>
+                <div class="radio-group" style="flex-direction:column;">
+                    <div class="radio-option full"><input type="radio" name="position" id="p1" value="c-level"><label for="p1">ผู้บริหารระดับสูง (C-Level, MD, กรรมการบริษัท)</label></div>
+                    <div class="radio-option full"><input type="radio" name="position" id="p2" value="director"><label for="p2">ผู้บริหารระดับกลาง (ผู้อำนวยการกลุ่มธุรกิจ/ฝ่าย/แผนก)</label></div>
+                    <div class="radio-option full"><input type="radio" name="position" id="p3" value="manager"><label for="p3">ผู้บริหารระดับต้น (ผู้จัดการฝ่าย/แผนก)</label></div>
+                    <div class="radio-option full"><input type="radio" name="position" id="p4" value="other" onchange="document.getElementById('positionOther').style.display='block'"><label for="p4">อื่นๆ (โปรดระบุ)</label></div>
+                </div>
+                <input type="text" class="email-input" id="positionOther" name="positionOther" placeholder="โปรดระบุตำแหน่งงาน" style="display:none;margin-top:0.5rem;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">5. อีเมล</label>
+                <input type="email" class="email-input" id="emailInput" name="email" placeholder="example@company.com">
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">🏢 ข้อมูลองค์กร</div>
+            <div class="form-group">
+                <label class="form-label">6. ชื่อองค์กร/หน่วยงาน</label>
+                <input type="text" class="email-input" id="orgName" name="orgName" placeholder="กรอกชื่อองค์กร/หน่วยงาน">
+            </div>
+            <div class="form-group">
+                <label class="form-label">7. ประเภทธุรกิจ</label>
+                <div class="radio-group" style="flex-direction:column;">
+                    <div class="radio-option full"><input type="radio" name="bizType" id="bt1" value="partnership"><label for="bt1">ห้างหุ้นส่วนจำกัด</label></div>
+                    <div class="radio-option full"><input type="radio" name="bizType" id="bt2" value="limited"><label for="bt2">บริษัทจำกัด</label></div>
+                    <div class="radio-option full"><input type="radio" name="bizType" id="bt3" value="public"><label for="bt3">บริษัทมหาชน / จดทะเบียนในตลาดหลักทรัพย์</label></div>
+                    <div class="radio-option full"><input type="radio" name="bizType" id="bt4" value="government"><label for="bt4">หน่วยงานภาครัฐ (ส่วนราชการ/องค์การมหาชน/หน่วยงานรูปแบบพิเศษ)</label></div>
+                    <div class="radio-option full"><input type="radio" name="bizType" id="bt5" value="ngo"><label for="bt5">หน่วยงานประเภทอื่นๆ (สมาคม มูลนิธิ สถาบัน ฯลฯ)</label></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">8. รายละเอียดธุรกิจ (ระบุประเภท/วิธีประกอบธุรกิจหลัก ในกรณีที่มีหลายวิธี ให้เลือกวิธีที่เป็นสัดส่วนหลัก)</label>
+                <div class="radio-group">
+                    <div class="radio-option"><input type="radio" name="bizDetail" id="bd1" value="manufacturing"><label for="bd1">ภาคการผลิต (Manufacturing)</label></div>
+                    <div class="radio-option"><input type="radio" name="bizDetail" id="bd2" value="trading"><label for="bd2">ภาคการค้า (Trading)</label></div>
+                    <div class="radio-option"><input type="radio" name="bizDetail" id="bd3" value="service"><label for="bd3">ภาคการบริการ (Service)</label></div>
+                    <div class="radio-option"><input type="radio" name="bizDetail" id="bd4" value="gov"><label for="bd4">หน่วยงานภาครัฐ (ส่วนราชการ/องค์การมหาชน/หน่วยงานรูปแบบพิเศษ)</label></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">9. ประเภทอุตสาหกรรม (ตามกลุ่มอุตสาหกรรมของตลาดหลักทรัพย์แห่งประเทศไทย)</label>
+                <select class="form-select" name="industry">
+                    <option value="">-- เลือกประเภทอุตสาหกรรม --</option>
+                    <option value="agro">เกษตรและอุตสาหกรรมอาหาร (ธุรกิจการเกษตร, อาหารและเครื่องดื่ม)</option>
+                    <option value="consumer">สินค้าอุปโภคบริโภค (แฟชั่น, ของใช้ในครัวเรือนและสำนักงาน, ของใช้ส่วนตัวและเวชภัณฑ์)</option>
+                    <option value="finance">ธุรกิจการเงิน (ธนาคาร, เงินทุนและหลักทรัพย์, ประกันภัยและประกันชีวิต)</option>
+                    <option value="industrial">สินค้าอุตสาหกรรม (ยานยนต์, วัสดุอุตสาหกรรมและเครื่องจักร, กระดาษและวัสดุการพิมพ์, ปิโตรเคมีและเคมีภัณฑ์, บรรจุภัณฑ์, เหล็กและผลิตภัณฑ์โลหะ)</option>
+                    <option value="property">อสังหาริมทรัพย์และก่อสร้าง (พัฒนาอสังหาริมทรัพย์, วัสดุก่อสร้าง, บริการรับเหมาก่อสร้าง, กองทุนรวมอสังหาริมทรัพย์และกองทรัสต์เพื่อการลงทุนในอสังหาริมทรัพย์)</option>
+                    <option value="resource">ทรัพยากร (พลังงานและสาธารณูปโภค, เหมืองแร่)</option>
+                    <option value="service">บริการ (พาณิชย์, สื่อและสิ่งพิมพ์, การแพทย์, บริการเฉพาะกิจ, การท่องเที่ยวและสันทนาการ, ขนส่งและโลจิสติกส์)</option>
+                    <option value="tech">เทคโนโลยี (ชิ้นส่วนอิเล็กทรอนิกส์, เทคโนโลยีสารสนเทศและการสื่อสาร)</option>
+                    <option value="government">หน่วยงานภาครัฐ (ส่วนราชการ/องค์การมหาชน/หน่วยงานรูปแบบพิเศษ)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">10. รายได้ของบริษัทต่อปี</label>
+                <div class="radio-group" style="flex-direction:column;">
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r1" value="1.8-50"><label for="r1">รายได้ 1.8 - 50 ล้านบาทต่อปี</label></div>
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r2" value="50-100"><label for="r2">รายได้ 50 - 100 ล้านบาทต่อปี</label></div>
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r3" value="100-300"><label for="r3">รายได้ 100 - 300 ล้านบาทต่อปี</label></div>
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r4" value="300-500"><label for="r4">รายได้ 300 - 500 ล้านบาทต่อปี</label></div>
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r5" value="500-1000"><label for="r5">รายได้ 500 - 1,000 ล้านบาทต่อปี</label></div>
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r6" value="1000-5000"><label for="r6">รายได้ 1,000 - 5,000 ล้านบาทต่อปี</label></div>
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r7" value="5000+"><label for="r7">รายได้มากกว่า 5,000 ล้านบาทต่อปี</label></div>
+                    <div class="radio-option full"><input type="radio" name="revenue" id="r8" value="gov"><label for="r8">หน่วยงานภาครัฐ (ส่วนราชการ/องค์การมหาชน/หน่วยงานรูปแบบพิเศษ)</label></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">11. จำนวนพนักงานทั้งหมด</label>
+                <div class="radio-group">
+                    <div class="radio-option"><input type="radio" name="employees" id="e1" value="5-30"><label for="e1">5-30 คน</label></div>
+                    <div class="radio-option"><input type="radio" name="employees" id="e2" value="30-50"><label for="e2">30-50 คน</label></div>
+                    <div class="radio-option"><input type="radio" name="employees" id="e3" value="50-100"><label for="e3">50-100 คน</label></div>
+                    <div class="radio-option"><input type="radio" name="employees" id="e4" value="100-200"><label for="e4">100-200 คน</label></div>
+                    <div class="radio-option"><input type="radio" name="employees" id="e5" value="200-500"><label for="e5">200-500 คน</label></div>
+                    <div class="radio-option"><input type="radio" name="employees" id="e6" value="500-1000"><label for="e6">500-1,000 คน</label></div>
+                    <div class="radio-option"><input type="radio" name="employees" id="e7" value="1000+"><label for="e7">มากกว่า 1,000 คน</label></div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-nav">
+            <button class="btn btn-secondary" onclick="goToStep(0)">← ย้อนกลับ</button>
+            <button class="btn btn-primary" onclick="goToStep(2)">ถัดไป →</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Context -->
+    <div class="step" id="step2">
+        <div class="step-dots"><div class="step-dot completed"></div><div class="step-dot completed"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+        <h2 style="font-family:'Space Grotesk';font-size:1.4rem;font-weight:700;margin-bottom:0.4rem;">บริบทความต้องการเปลี่ยนแปลง</h2>
+        <p style="color:var(--text2);margin-bottom:1.25rem;font-size:0.85rem;">ก่อนเริ่มประเมิน เราอยากเข้าใจบริบทขององค์กรท่านเพิ่มเติม</p>
+        
+        <div class="card">
+            <div class="form-group">
+                <label class="form-label">1. องค์กรของท่านต้องการการปรับเปลี่ยน และมีความเข้าใจเกี่ยวกับเหตุผลความจำเป็นที่ต้องดำเนินการเปลี่ยนแปลง (Case for Change)</label>
+                <div class="yesno-group">
+                    <div class="yesno-option"><input type="radio" name="ctx1" id="c1y" value="yes"><label for="c1y"><span class="icon">✅</span><span>ใช่</span></label></div>
+                    <div class="yesno-option"><input type="radio" name="ctx1" id="c1n" value="no"><label for="c1n"><span class="icon">❌</span><span>ไม่ใช่</span></label></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="form-group">
+                <label class="form-label">2. ท่านมองเห็นผลกระทบ (Impact) หรือแรงผลักดันทางธุรกิจที่ทำให้องค์กรต้องดำเนินการเปลี่ยนแปลง</label>
+                <div class="yesno-group">
+                    <div class="yesno-option"><input type="radio" name="ctx2" id="c2y" value="yes"><label for="c2y"><span class="icon">✅</span><span>ใช่</span></label></div>
+                    <div class="yesno-option"><input type="radio" name="ctx2" id="c2n" value="no"><label for="c2n"><span class="icon">❌</span><span>ไม่ใช่</span></label></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="form-group">
+                <label class="form-label">3. ผู้บริหารให้การสนับสนุนการเปลี่ยนแปลงเชิงกลยุทธ์ขององค์กร โดยมีความเข้าใจถึงความต้องการและมุมมองของผู้มีส่วนได้ส่วนเสียอย่างแท้จริง</label>
+                <div class="yesno-group">
+                    <div class="yesno-option"><input type="radio" name="ctx3" id="c3y" value="yes"><label for="c3y"><span class="icon">✅</span><span>ใช่</span></label></div>
+                    <div class="yesno-option"><input type="radio" name="ctx3" id="c3n" value="no"><label for="c3n"><span class="icon">❌</span><span>ไม่ใช่</span></label></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="form-group">
+                <label class="form-label">4. ในมุมมองของท่าน องค์กรของท่านมีความเร่งด่วนที่จะต้องดำเนินการเปลี่ยนแปลงมากน้อยเพียงใด</label>
+                <div class="urgency-group">
+                    <div class="urgency-option"><input type="radio" name="urgency" id="u1" value="low"><label for="u1"><span class="icon">🟢</span><span class="title">ไม่เร่งด่วนเลย</span><span class="desc">ภายใน 3 ปี</span></label></div>
+                    <div class="urgency-option"><input type="radio" name="urgency" id="u2" value="medium"><label for="u2"><span class="icon">🟡</span><span class="title">เร่งด่วนเล็กน้อย</span><span class="desc">ภายใน 1-2 ปี</span></label></div>
+                    <div class="urgency-option"><input type="radio" name="urgency" id="u3" value="high"><label for="u3"><span class="icon">🔴</span><span class="title">เร่งด่วนมาก</span><span class="desc">ภายใน 6-12 เดือน</span></label></div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-nav">
+            <button class="btn btn-secondary" onclick="goToStep(1)">← ย้อนกลับ</button>
+            <button class="btn btn-primary" onclick="goToStep(3)">เริ่มประเมินความพร้อม →</button>
+        </div>
+    </div>
+
+    <!-- Step 3: Assessment -->
+    <div class="step" id="step3">
+        <div class="step-dots"><div class="step-dot completed"></div><div class="step-dot completed"></div><div class="step-dot completed"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
+        
+        <!-- H4: คำชี้แจงจาก PDF หน้า 4 -->
+        <div class="card" style="background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(251,191,36,0.02));border-color:rgba(251,191,36,0.3);margin-bottom:1.5rem;">
+            <div class="card-title" style="color:var(--amber);">📋 คำชี้แจง</div>
+            <p style="font-size:0.85rem;color:var(--text2);margin-bottom:1rem;">กรุณาเลือกระดับคะแนนที่ตรงกับความคิดเห็น/ความพร้อมขององค์กรของท่านมากที่สุด โดย</p>
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.8rem;color:var(--text2);">
+                    <thead>
+                        <tr style="background:var(--bg3);">
+                            <th style="padding:0.6rem;border:1px solid var(--border);text-align:center;width:60px;">ระดับคะแนน</th>
+                            <th style="padding:0.6rem;border:1px solid var(--border);text-align:center;">ระดับความคิดเห็น</th>
+                            <th style="padding:0.6rem;border:1px solid var(--border);text-align:center;">ระดับความพร้อม</th>
+                            <th style="padding:0.6rem;border:1px solid var(--border);text-align:left;">คำอธิบายรายละเอียด</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;font-weight:600;color:var(--red);">1</td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Strongly Disagree<br><span style="color:var(--text3);">ไม่เห็นด้วยอย่างยิ่ง</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Not Ready at All<br><span style="color:var(--text3);">ไม่พร้อมอย่างยิ่ง</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);">No evidence or capability in this area<br><span style="color:var(--text3);">ไม่มีแนวปฏิบัติ หลักฐาน หรือศักยภาพใดๆ ในด้านนี้</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;font-weight:600;color:var(--orange);">2</td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Mostly Disagree<br><span style="color:var(--text3);">ไม่เห็นด้วยเป็นส่วนใหญ่</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Minimally Ready<br><span style="color:var(--text3);">พร้อมเพียงเล็กน้อย</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);">Some awareness or action, but inconsistent or underdeveloped<br><span style="color:var(--text3);">มีการรับรู้หรือมีการปฏิบัติอยู่บ้าง แต่ไม่สม่ำเสมอหรือยังขาดการพัฒนา</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;font-weight:600;color:var(--cyan);">3</td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Mostly Agree<br><span style="color:var(--text3);">เห็นด้วยเป็นส่วนใหญ่</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Mostly Ready<br><span style="color:var(--text3);">พร้อมเป็นส่วนใหญ่</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);">Consistent practice with a solid foundation, but room for improvement<br><span style="color:var(--text3);">มีการปฏิบัติและมีความพยายามสม่ำเสมอ มีพื้นฐานที่ดีแต่ยังต้องปรับปรุงเพิ่มเติม</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;font-weight:600;color:var(--emerald);">4</td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Strongly Agree<br><span style="color:var(--text3);">เห็นด้วยอย่างยิ่ง</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);text-align:center;">Fully Ready<br><span style="color:var(--text3);">พร้อมเต็มที่</span></td>
+                            <td style="padding:0.6rem;border:1px solid var(--border);">Mature practices fully in place and aligned with the transformation objectives<br><span style="color:var(--text3);">มีแนวปฏิบัติที่ชัดเจน ครบถ้วน และสอดคล้องกับเป้าหมายของการเปลี่ยนแปลง</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="substep-nav" id="substepNav">
+            <button class="substep-btn active" onclick="goToSubstep(1)">📈 Business</button>
+            <button class="substep-btn" onclick="goToSubstep(2)">💻 Technology</button>
+            <button class="substep-btn" onclick="goToSubstep(3)">👥 People & Leadership</button>
+            <button class="substep-btn" onclick="goToSubstep(4)">🌟 Culture</button>
+        </div>
+        
+        <!-- Substeps will be generated by JavaScript -->
+        <div id="assessmentContainer"></div>
+    </div>
+
+    <!-- Step 4: Review -->
+    <div class="step" id="step4">
+        <div class="step-dots"><div class="step-dot completed"></div><div class="step-dot completed"></div><div class="step-dot completed"></div><div class="step-dot completed"></div><div class="step-dot active"></div></div>
+        <h2 style="font-family:'Space Grotesk';font-size:1.4rem;font-weight:700;margin-bottom:0.4rem;">ตรวจสอบและส่งแบบประเมิน</h2>
+        <p style="color:var(--text2);margin-bottom:1.25rem;font-size:0.85rem;">กรุณาตรวจสอบความครบถ้วนก่อนส่งแบบประเมิน</p>
+        
+        <div class="review-grid" id="reviewSummary"></div>
+        
+        <div class="card">
+            <div class="consent-group">
+                <input type="checkbox" id="consent">
+                <label for="consent">ยินยอมให้ใช้ข้อมูลเพื่อการวิเคราะห์ภาพรวมและปรับปรุงบริการ โดยข้อมูลส่วนบุคคลจะถูกเก็บรักษาเป็นความลับ</label>
+            </div>
+        </div>
+        
+        <div class="btn-nav">
+            <button class="btn btn-secondary" onclick="goToStep(3)">← ย้อนกลับ</button>
+            <button class="btn btn-primary" onclick="submitSurvey()">📤 ส่งแบบประเมิน</button>
+        </div>
+    </div>
+</main>
+
+<div class="floating-progress" id="floatingProgress">
+    <div class="label">ความคืบหน้า</div>
+    <div class="bar"><div class="bar-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<script>
+// Question Data
+const surveyData = {
+    business: {
+        icon: '📈', name: 'Business Strategy', class: 'business',
+        desc: 'กลยุทธ์ธุรกิจ: วิสัยทัศน์ การสนับสนุนจากผู้บริหาร ความคล่องตัว',
+        subdims: [
+            { name: '1. Vision, Mission, Goal & Strategic Clarity', questions: [
+                'องค์กรของท่านมีวิสัยทัศน์ที่ชัดเจน และมีการสื่อสารให้พนักงานทุกระดับเข้าใจตรงกัน และนำไปสู่การปฏิบัติที่มีประสิทธิภาพ',
+                'การเปลี่ยนแปลงองค์กร (Transformation) เป็นส่วนหนึ่งของกลยุทธ์ทางธุรกิจโดยรวม',
+                'เป้าหมาย และตัวชี้วัดความสำเร็จขององค์กรได้รับการสื่อสารอย่างชัดเจนและทั่วถึง'
+            ]},
+            { name: '2. Management Support', questions: [
+                'ผู้บริหารสูงสุดให้ความสำคัญกับการขับเคลื่อนการเปลี่ยนแปลงขององค์กร โดยกำหนดเป็นตัวชี้วัด (KPIs) ส่วนบุคคล',
+                'ผู้บริหารสูงสุดเป็นแบบอย่างในการขับเคลื่อนการเปลี่ยนแปลงขององค์กร โดยแสดงภาวะผู้นำผ่านการลงมือปฏิบัติจริง',
+                'ผู้บริหารสูงสุดให้การสนับสนุน โดยจัดสรรเวลา งบประมาณ และคณะทำงานเพื่อสนับสนุนโครงการเปลี่ยนแปลง'
+            ]},
+            { name: '3. Market Insight & Awareness', questions: [
+                'องค์กรมีการติดตามและมีข้อมูลการเปลี่ยนแปลงพฤติกรรมของลูกค้า แนวโน้มอุตสาหกรรม และสถานการณ์ของคู่แข่งอย่างต่อเนื่อง',
+                'มีการนำข้อมูลเชิงลึกของตลาดและข้อมูลภายนอกมาวิเคราะห์และใช้ในการวางแผนงาน การดำเนินงาน และการตัดสินใจทางธุรกิจ',
+                'องค์กรมีความสามารถในการปรับตัวให้ทันต่อความต้องการของตลาดที่เปลี่ยนแปลงไป'
+            ]},
+            { name: '4. Strategic Agility & Governance', questions: [
+                'รูปแบบธุรกิจขององค์กร (Business Model) มีความยืดหยุ่นเพียงพอที่จะปรับตัวเพื่อรองรับความผันผวน (Disruption) ของตลาด',
+                'องค์กรมีระบบการติดตามและประเมินความคืบหน้าอย่างสม่ำเสมอ ในการบริหารโครงการ',
+                'มีการทบทวนและปรับปรุงวัตถุประสงค์เชิงกลยุทธ์อย่างสม่ำเสมอ เพื่อให้สอดคล้องกับปัจจัยภายนอกที่เปลี่ยนไป',
+                'มีความสอดคล้องกันระหว่างเป้าหมายระยะยาวขององค์กรกับโครงการระยะสั้น'
+            ]},
+            { name: '5. Change Planning & Risk Assessment', questions: [
+                'องค์กรมีการจัดทำแผนงานหรือแผนกลยุทธ์การเปลี่ยนแปลง และแผนงานนั้นได้รับการอนุมัติอย่างเป็นทางการ',
+                'องค์กรมีแผนการบริหารจัดการความเสี่ยงด้านต่างๆ รวมถึงมีการประเมิน และมีแผนรับมือกับความเสี่ยงเหล่านั้น',
+                'องค์กรมีการจัดเตรียมแผนสำรองในกรณีที่โครงการเปลี่ยนแปลงต้องเผชิญกับอุปสรรค'
+            ]}
+        ]
+    },
+    tech: {
+        icon: '💻', name: 'Technology', class: 'tech',
+        desc: 'เทคโนโลยี: โครงสร้างพื้นฐาน IT เครื่องมือดิจิทัล การจัดการข้อมูล',
+        subdims: [
+            { name: '1. IT Infrastructure', questions: [
+                'ระบบโครงสร้างพื้นฐาน IT ขององค์กร (Hardware, Software, Communication) สอดคล้องกับแผนกลยุทธ์และสามารถรองรับการเติบโตในอนาคตได้อย่างเพียงพอและเหมาะสม',
+                'องค์กรมีแผนบริหารจัดการความต่อเนื่องทางธุรกิจ (Business Continuity Plan) และมีการทบทวนรวมถึงการซ้อมรับมืออย่างเหมาะสม'
+            ]},
+            { name: '2. Digital Tools & Automation', questions: [
+                'องค์กรมีการทบทวนกระบวนการหลักทางธุรกิจ (Business Process) อย่างสม่ำเสมอและได้มีการนำเทคโนโลยีมาปรับใช้',
+                'องค์กรมีการบูรณาการอย่างมีประสิทธิภาพ ทั้งในด้านกระบวนการทำงาน การส่งต่อข้อมูลและใช้ข้อมูลข้ามสายงาน',
+                'องค์กรมีแนวคิด (หรือเริ่ม) ในการนำ AI มาใช้เพื่อเพิ่มประสิทธิภาพของธุรกิจ'
+            ]},
+            { name: '3. Data Management', questions: [
+                'ข้อมูลสำคัญขององค์กรถูกจัดเก็บเป็นอย่างดี มีนโยบาย/ระบบควบคุมการเข้าถึงที่เพียงพอและมีประสิทธิภาพ',
+                'องค์กรให้ความสำคัญกับการวิเคราะห์ข้อมูลและการใช้ข้อมูลเชิงลึกในการตัดสินใจทางธุรกิจ (Data-Driven)',
+                'องค์กรมีแนวนโยบายและมีการปฏิบัติตามหลักกำกับดูแลข้อมูล เช่น การควบคุมคุณภาพ การรักษาความเป็นส่วนตัว และการปฏิบัติตามข้อกำหนด'
+            ]},
+            { name: '4. Integration Capabilities', questions: [
+                'องค์กรให้ความสำคัญกับการนำเทคโนโลยีใหม่มาเพิ่มประสิทธิภาพ ปรับปรุง และ/หรือ สนับสนุนกระบวนการทำงานในปัจจุบันได้อย่างมีประสิทธิภาพ'
+            ]},
+            { name: '5. Technology Alignment & Innovation', questions: [
+                'แผนงานด้านเทคโนโลยีขององค์กรสอดคล้องกับทิศทางเชิงกลยุทธ์',
+                'ฝ่ายไอทีและฝ่ายกลยุทธ์ธุรกิจทำงานร่วมกันอย่างมีประสิทธิภาพในการริเริ่มโครงการด้านเทคโนโลยี',
+                'องค์กรมีการจัดสรรงบประมาณที่เพียงพอและเหมาะสมเพื่อสนับสนุนนวัตกรรมที่ขับเคลื่อนด้วยเทคโนโลยี'
+            ]}
+        ]
+    },
+    people: {
+        icon: '👥', name: 'People & Leadership', class: 'people',
+        desc: 'พนักงานและภาวะผู้นำ: ขีดความสามารถ ความพร้อมต่อการเปลี่ยนแปลง การสื่อสาร',
+        subdims: [
+            { name: '1. Organizational Capability', questions: [
+                'พนักงานมีทักษะและศักยภาพพร้อมที่จะสนับสนุนการเปลี่ยนแปลงขององค์กร',
+                'องค์กรมีการวางแผนและดำเนินงานด้านการพัฒนาทักษะของพนักงานที่เหมาะสมและสอดคล้องกับกลยุทธ์ทางธุรกิจ',
+                'องค์กรมีการกำหนดตำแหน่งสำคัญ (Critical Role) และแผนสืบทอดตำแหน่งนั้นๆ ที่ชัดเจน'
+            ]},
+            { name: '2. Change Readiness', questions: [
+                'พนักงานมีศักยภาพและทัศนคติที่พร้อมปรับตัวและยอมรับการเปลี่ยนแปลง',
+                'หัวหน้างานทุกระดับมีความพร้อมและศักยภาพที่จะเป็นผู้นำการเปลี่ยนแปลง (Transformation Leader)',
+                'องค์กรมีการกำหนด Change Agent หรือแต่งตั้ง Agile Team ที่เป็นรูปธรรม เพื่อขับเคลื่อนการเปลี่ยนแปลง',
+                'องค์กรมีแนวทางบริหารจัดการการเปลี่ยนแปลงที่เป็นระบบ มีทรัพยากรเพียงพอ และมีประสิทธิภาพ'
+            ]},
+            { name: '3. Communication', questions: [
+                'องค์กรมีการจัดทำแผนการสื่อสาร (Communication Plan) เกี่ยวกับการเปลี่ยนแปลง ที่ชัดเจนและเหมาะสม',
+                'พนักงานได้รับข้อมูลที่ชัดเจนเกี่ยวกับผลกระทบของการเปลี่ยนแปลงต่อหน้าที่และความรับผิดชอบของตน'
+            ]},
+            { name: '4. Leadership Readiness', questions: [
+                'องค์กรให้ความสำคัญในการพัฒนาผู้นำรุ่นใหม่โดยคำนึงถึงทักษะและศักยภาพในการบริหารจัดการการเปลี่ยนแปลง',
+                'หัวหน้างานส่วนใหญ่มีพฤติกรรมเป็นแบบอย่างที่ดีของการเป็นผู้นำการเปลี่ยนแปลง'
+            ]},
+            { name: '5. Employee Participation & Ownership', questions: [
+                'พนักงานมีความเข้าใจว่าโครงการและกิจกรรมการเปลี่ยนแปลงส่งผลต่อบทบาทหน้าที่ของตนอย่างไร',
+                'พนักงานมีโอกาสเสนอแนวคิดและมีส่วนร่วมในโครงการเปลี่ยนแปลงขององค์กร',
+                'พนักงานมีความรู้สึกเป็นเจ้าของและมีความรับผิดชอบต่อการเปลี่ยนแปลงในภาพรวมองค์กร',
+                'องค์กรมีระบบการยกย่องและให้รางวัลแก่พฤติกรรมที่สนับสนุนการเปลี่ยนแปลงและขับเคลื่อนการพัฒนา'
+            ]}
+        ]
+    },
+    culture: {
+        icon: '🌟', name: 'Culture', class: 'culture',
+        desc: 'วัฒนธรรมองค์กร: การเปิดรับแนวคิดใหม่ ความร่วมมือ การเรียนรู้',
+        subdims: [
+            { name: '1. Open Mindset', questions: [
+                'มีการทบทวนวัฒนธรรมองค์กรอย่างสม่ำเสมอ ซึ่งรวมถึงการปรับเปลี่ยนให้สอดคล้องกับบริบทของวิสัยทัศน์ทางธุรกิจ',
+                'องค์กรเปิดรับแนวคิดใหม่ๆ ส่งเสริมนวัตกรรมและการทดลองสิ่งใหม่ แม้ว่าผลลัพธ์จะยังไม่แน่นอน',
+                'พนักงานได้รับการเปิดโอกาสนำเสนอแนวคิดเพื่อปรับปรุง/เปลี่ยนแปลงอย่างสม่ำเสมอ',
+                'มีการจัดสรรทรัพยากร เวลา งบประมาณ และเครื่องมือเพื่อสนับสนุนนวัตกรรมและการพัฒนา'
+            ]},
+            { name: '2. Collaboration & Trust', questions: [
+                'การสื่อสารระหว่างผู้บริหารและพนักงานเป็นไปอย่างเปิดเผย โปร่งใส ตรงไปตรงมา',
+                'หน่วยงานและทีมงานร่วมมือกันเป็นอย่างดีและมีการแลกเปลี่ยนองค์ความรู้อย่างเปิดกว้าง',
+                'องค์กรมีพื้นที่ปลอดภัยสำหรับการสื่อสารอย่างเปิดเผย',
+                'พนักงานมีความเชื่อมั่นต่อทิศทางและการตัดสินใจของผู้บริหาร'
+            ]},
+            { name: '3. Learning Culture', questions: [
+                'มีการเก็บรวบรวมและนำข้อเสนอแนะจากพนักงานและลูกค้ามาใช้เพื่อการพัฒนาและปรับปรุง',
+                'องค์กรมีวัฒนธรรมในการมองข้อผิดพลาดเป็นโอกาสในการเรียนรู้และพัฒนา ไม่ใช่เป็นข้อบกพร่อง',
+                'มีระบบหรือกลไกการเรียนรู้และการพัฒนาอย่างเป็นรูปธรรม เช่น การทบทวนย้อนหลัง การประเมินผลหลังดำเนินการ'
+            ]}
+        ]
+    }
+};
+
+const perspectiveOrder = ['business', 'tech', 'people', 'culture'];
+const totalQuestions = { business: 16, tech: 12, people: 15, culture: 11 };
+let currentStep = 0;
+let currentSubstep = 1;
+let answers = {};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    generateAssessment();
+    updateProgress();
+});
+
+// Generate Assessment Questions
+function generateAssessment() {
+    const container = document.getElementById('assessmentContainer');
+    let substepIndex = 1;
+    
+    for (const [key, perspective] of Object.entries(surveyData)) {
+        let html = `
+        <div class="substep ${substepIndex === 1 ? 'active' : ''}" id="substep${substepIndex}">
+            <div class="perspective-header">
+                <div class="perspective-icon ${perspective.class}">${perspective.icon}</div>
+                <div class="perspective-info">
+                    <h3>${perspective.name}</h3>
+                    <p>${perspective.desc}</p>
+                </div>
+                <div class="perspective-progress">
+                    <div class="count"><span id="${key}-answered">0</span>/${totalQuestions[key]}</div>
+                    <div class="label">ข้อที่ตอบแล้ว</div>
+                </div>
+            </div>
+            <div class="card">`;
+        
+        let qNum = 1;
+        perspective.subdims.forEach((subdim, sIdx) => {
+            html += `<div class="subdim-section"><div class="subdim-title">${subdim.name}</div>`;
+            
+            subdim.questions.forEach((q, qIdx) => {
+                const qId = `${key}_${sIdx+1}_${qIdx+1}`;
+                html += `
+                <div class="question-card" data-perspective="${key}" id="qcard_${qId}">
+                    <div class="question-text">
+                        <span class="question-number">${sIdx+1}.${qIdx+1}</span>
+                        ${q}
+                    </div>
+                    <div class="rating-scale">
+                        <div class="rating-option"><input type="radio" name="${qId}" id="${qId}_1" value="1" onchange="markAnswered('${qId}','${key}')"><label for="${qId}_1"><span class="score">1</span><span class="desc">ไม่เห็นด้วยอย่างยิ่ง / ไม่พร้อมอย่างยิ่ง</span></label></div>
+                        <div class="rating-option"><input type="radio" name="${qId}" id="${qId}_2" value="2" onchange="markAnswered('${qId}','${key}')"><label for="${qId}_2"><span class="score">2</span><span class="desc">ไม่เห็นด้วยเป็นส่วนใหญ่ / พร้อมเพียงเล็กน้อย</span></label></div>
+                        <div class="rating-option"><input type="radio" name="${qId}" id="${qId}_3" value="3" onchange="markAnswered('${qId}','${key}')"><label for="${qId}_3"><span class="score">3</span><span class="desc">เห็นด้วยเป็นส่วนใหญ่ / พร้อมเป็นส่วนใหญ่</span></label></div>
+                        <div class="rating-option"><input type="radio" name="${qId}" id="${qId}_4" value="4" onchange="markAnswered('${qId}','${key}')"><label for="${qId}_4"><span class="score">4</span><span class="desc">เห็นด้วยอย่างยิ่ง / พร้อมเต็มที่</span></label></div>
+                    </div>
+                </div>`;
+                qNum++;
+            });
+            html += `</div>`;
+        });
+        
+        html += `
+                <div class="comment-box">
+                    <label>💬 ความคิดเห็น/ข้อมูลที่ต้องการชี้แจงเพิ่มเติม (ไม่บังคับ)</label>
+                    <textarea placeholder="กรอกความคิดเห็นเพิ่มเติมเกี่ยวกับ ${perspective.name}..." id="comment_${key}"></textarea>
+                </div>
+            </div>
+            <div class="btn-nav">`;
+        
+        if (substepIndex === 1) {
+            html += `<button class="btn btn-secondary" onclick="goToStep(2)">← ย้อนกลับ</button>`;
+        } else {
+            html += `<button class="btn btn-secondary" onclick="goToSubstep(${substepIndex-1})">← ${surveyData[perspectiveOrder[substepIndex-2]].name}</button>`;
+        }
+        
+        if (substepIndex === 4) {
+            html += `<button class="btn btn-primary" onclick="goToStep(4)">ตรวจสอบและส่ง →</button>`;
+        } else {
+            html += `<button class="btn btn-primary" onclick="goToSubstep(${substepIndex+1})">ถัดไป: ${surveyData[perspectiveOrder[substepIndex]].name} →</button>`;
+        }
+        
+        html += `</div></div>`;
+        container.innerHTML += html;
+        substepIndex++;
+    }
+}
+
+// Mark Question as Answered
+function markAnswered(qId, perspective) {
+    answers[qId] = document.querySelector(`input[name="${qId}"]:checked`)?.value;
+    document.getElementById(`qcard_${qId}`).classList.add('answered');
+    updatePerspectiveCount(perspective);
+    updateProgress();
+}
+
+// Update Perspective Count
+function updatePerspectiveCount(perspective) {
+    const total = totalQuestions[perspective];
+    let answered = 0;
+    document.querySelectorAll(`[data-perspective="${perspective}"] input:checked`).forEach(() => answered++);
+    document.getElementById(`${perspective}-answered`).textContent = answered;
+    
+    // Update substep button
+    const idx = perspectiveOrder.indexOf(perspective) + 1;
+    const btn = document.querySelectorAll('.substep-btn')[idx-1];
+    if (answered === total) {
+        btn.classList.add('completed');
+    } else {
+        btn.classList.remove('completed');
+    }
+}
+
+// Update Progress
+function updateProgress() {
+    const totalQ = 54;
+    const answered = Object.keys(answers).length;
+    const pct = Math.round((answered / totalQ) * 100);
+    
+    document.getElementById('progressFill').style.width = pct + '%';
+    
+    if (currentStep === 3 && answered > 0) {
+        document.getElementById('floatingProgress').classList.add('visible');
+    } else {
+        document.getElementById('floatingProgress').classList.remove('visible');
+    }
+}
+
+// Navigation
+function goToStep(step) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step${step}`).classList.add('active');
+    
+    document.querySelectorAll('.progress-step').forEach((s, i) => {
+        s.classList.remove('active', 'completed');
+        if (i < step) s.classList.add('completed');
+        if (i === step) s.classList.add('active');
+    });
+    
+    currentStep = step;
+    updateProgress();
+    
+    if (step === 4) {
+        generateReviewSummary();
+    }
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToSubstep(substep) {
+    document.querySelectorAll('.substep').forEach(s => s.classList.remove('active'));
+    document.getElementById(`substep${substep}`).classList.add('active');
+    
+    document.querySelectorAll('.substep-btn').forEach((b, i) => {
+        b.classList.remove('active');
+        if (i === substep - 1) b.classList.add('active');
+    });
+    
+    currentSubstep = substep;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Generate Review Summary
+function generateReviewSummary() {
+    const container = document.getElementById('reviewSummary');
+    let html = '';
+    
+    perspectiveOrder.forEach(key => {
+        const data = surveyData[key];
+        const total = totalQuestions[key];
+        let answered = 0;
+        document.querySelectorAll(`[data-perspective="${key}"] input:checked`).forEach(() => answered++);
+        const isComplete = answered === total;
+        
+        html += `
+        <div class="review-card ${isComplete ? 'complete' : 'incomplete'}">
+            <div class="icon">${data.icon}</div>
+            <div class="value">${answered}/${total}</div>
+            <div class="label">${data.name}</div>
+        </div>`;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Submit Survey
+function submitSurvey() {
+    const totalQ = 55;
+    const answered = Object.keys(answers).length;
+    
+    if (answered < totalQ) {
+        if (!confirm(`ท่านตอบคำถามไป ${answered}/${totalQ} ข้อ\nต้องการส่งแบบประเมินหรือไม่?`)) {
+            return;
+        }
+    }
+    
+    // Collect all data
+    const formData = {
+        demographics: {},
+        context: {},
+        assessment: answers,
+        comments: {},
+        email: document.getElementById('emailInput')?.value || '',
+        firstName: document.getElementById('firstName')?.value || '',
+        lastName: document.getElementById('lastName')?.value || '',
+        orgName: document.getElementById('orgName')?.value || '',
+        positionOther: document.getElementById('positionOther')?.value || '',
+        consent: document.getElementById('consent').checked
+    };
+    
+    // Collect demographics (including text inputs)
+    document.querySelectorAll('#step1 input:checked, #step1 select, #step1 input[type="text"], #step1 input[type="email"]').forEach(el => {
+        if (el.name && el.value) formData.demographics[el.name] = el.value;
+    });
+    
+    // Collect context
+    document.querySelectorAll('#step2 input:checked').forEach(el => {
+        if (el.name && el.value) formData.context[el.name] = el.value;
+    });
+    
+    // Collect comments
+    perspectiveOrder.forEach(key => {
+        const comment = document.getElementById(`comment_${key}`)?.value;
+        if (comment) formData.comments[key] = comment;
+    });
+    
+    console.log('Survey Data:', formData);
+    alert('✅ ส่งแบบประเมินเรียบร้อยแล้ว!\n\nขอบคุณที่สละเวลาทำแบบประเมินความพร้อมในการปรับเปลี่ยนขององค์กร\n\nเจ้าหน้าที่จะติดต่อกลับทางอีเมลที่ท่านให้ไว้เพื่อนำส่งรายงานผลการประเมิน');
+}
+</script>
+</body>
+</html>
